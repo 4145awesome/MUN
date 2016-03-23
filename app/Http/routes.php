@@ -15,4 +15,4 @@ $app->get('/', function () use ($app) {
     return $app->version();
 });
 
-$app->get('/properties/{MlsID}', 'MunController@getProperty');
+$app->post('/properties/{MlsID}', 'MunController@getProperty');
