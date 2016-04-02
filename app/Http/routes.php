@@ -12,7 +12,7 @@
 */
 
 $app->get('/', function () use ($app) {
-    return "MUN version 0.1.0, Running ". $app->version();
+    return "MUN version 0.5.0, Running ". $app->version();
 });
 
 $app->post('/properties/{MlsID}', 'MunController@getProperty');
