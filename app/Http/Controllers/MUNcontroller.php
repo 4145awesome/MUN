@@ -9,7 +9,7 @@ use GuzzleHttp\Client;
 class MunController extends Controller
 {
 
-    private $insuranceUrl = 'http://localhost:8080/muncode';
+    private $insuranceUrl = 'https://insinc.laboratory.cf/muncode';
 
     public function getProperty($MlsID, Request $request){
         $code = app('db')->table('codes')->select('muncode')->where('mlsid', $MlsID)->first();
