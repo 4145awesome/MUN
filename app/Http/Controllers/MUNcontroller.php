@@ -19,7 +19,7 @@ class MunController extends Controller
                 return response()->json(["error" => false, "response" =>["mlsid" => $mortID, 'munCode' => $code->muncode]]);
             }else {
                 $client = new Client();
-                $response = $client->request('POST', $this->insuranceUrl, ['form_params' => ['mortId' => 12443, 'munCode' => $code->muncode]]);
+                $response = $client->request('POST', $this->insuranceUrl, ['form_params' => ['mlsid' => $MlsID, 'munCode' => $code->muncode]]);
                 $error = false;
                 if($response->getStatusCode() != 200){
                     $error = true;
