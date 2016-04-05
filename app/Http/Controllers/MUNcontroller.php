@@ -21,14 +21,13 @@ class MunController extends Controller
                 $client = new Client();
                 $response = $client->request('POST', $this->insuranceUrl, ['form_params' => ['mortId' => 12443, 'munCode' => $code->muncode]]);
                 $error = false;
-                $body = "No Data";
                 if($response->getStatusCode() != 200){
                     $error = true;
                     $body = $response->getReasonPhrase();
                 }else{
                     $body = $response->getBody();
                 }
-                return response()->json(["error" => false, "response" => json_decode((string) $body)]);
+                return response()->json(["error" => $error, "response" => json_decode((string) $body)]);
             }
         }else{
             return response()->json(["error" => "Could not find code"], 500);
