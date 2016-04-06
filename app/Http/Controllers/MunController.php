@@ -25,7 +25,7 @@ class MunController extends Controller
         //if we were able to find a code
         if($code){
             //prepare data
-            $toSend = ["mlsid" => $MlsID, "mortID" => $mortID, 'munCode' => $code["muncode"]];
+            $toSend = ["mlsid" => $MlsID, "mortID" => $mortID, 'munCode' => $code->muncode];
             //if debugging is on
             if($request->input('debug') == 1){
                 //return what we would send INSinc instead of actually sending it
