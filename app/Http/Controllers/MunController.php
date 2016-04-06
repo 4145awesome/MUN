@@ -8,29 +8,53 @@ use GuzzleHttp\Client;
 
 class MunController extends Controller
 {
-
+    //address of insurance company endpoint
     private $insuranceUrl = 'https://insinc.laboratory.cf/muncode';
 
+    /**
+     * @param $MlsID - The property ID, retrieved from the URL
+     * @param Request $request - Ued to get form data
+     * @return Response - JSON-formatted response
+     */
     public function getProperty($MlsID, Request $request){
+        //get the code from the table
         $code = app('db')->table('codes')->select('muncode')->where('mlsid', $MlsID)->first();
+        //get the mortID from the request
         $mortID = $request->input('mortID');
+
+        //if we were able to find a code
         if($code){
+            //if debugging is on
             if($request->input('debug') == 1){
+                //return what we would send INSinc instead of actually sending it
                 return response()->json(["error" => false, "response" =>["mlsid" => $mortID, 'munCode' => $code->muncode]]);
             }else {
+                //create a new GuzzleHttp client
                 $client = new Client();
-                $response = $client->request('POST', $this->insuranceUrl, ['form_params' => ['mlsid' => $MlsID, 'munCode' => $code->muncode]]);
-                $error = false;
-                if($response->getStatusCode() != 200){
+                try{
+                    //connect to the insurance company and send the data
+                    $response = $client->request('POST', $this->insuranceUrl, ['form_params' => ['mlsid' => $MlsID, 'munCode' => $code->muncode]]);
+                    $error = false;
+
+                    //if the response returns anything other than OK
+                    if($response->getStatusCode() != 200){
+                        //set error and set reason
+                        $error = true;
+                        $body = $response->getReasonPhrase();
+                    }else{
+                        //get content of response
+                        $body = json_decode((string) $response->getBody());
+                    }
+                } catch (\Exception $e) { //if the request fails
+                    //set error and message
                     $error = true;
-                    $body = $response->getReasonPhrase();
-                }else{
-                    $body = $response->getBody();
+                    $body = "Could not establish connection to INSinc";
                 }
-                return response()->json(["error" => $error, "response" => json_decode((string) $body)]);
+
+                return response()->json(["error" => $error, "response" =>  $body]);
             }
-        }else{
-            return response()->json(["error" => "Could not find code"], 500);
+        }else{ //db request returned 0 rows
+            return response()->json(["error" => "Could not find property"], 500);
         }
     }
 }
