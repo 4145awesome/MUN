@@ -24,16 +24,18 @@ class MunController extends Controller
 
         //if we were able to find a code
         if($code){
+            //prepare data
+            $toSend = ["mlsid" => $MlsID, "mortID" => $mortID, 'munCode' => $code->muncode];
             //if debugging is on
             if($request->input('debug') == 1){
                 //return what we would send INSinc instead of actually sending it
-                return response()->json(["error" => false, "response" =>["mlsid" => $mortID, 'munCode' => $code->muncode]]);
+                return response()->json(["error" => false, "response" => $toSend]);
             }else {
                 //create a new GuzzleHttp client
                 $client = new Client();
                 try{
                     //connect to the insurance company and send the data
-                    $response = $client->request('POST', $this->insuranceUrl, ['form_params' => ['mlsid' => $MlsID, 'munCode' => $code->muncode]]);
+                    $response = $client->request('POST', $this->insuranceUrl, ['form_params' => $toSend]);
                     $error = false;
 
                     //if the response returns anything other than OK
